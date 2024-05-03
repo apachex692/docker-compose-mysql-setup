@@ -1,0 +1,41 @@
+# Author: Sakthi Santhosh
+# Created on: 04/05/2024
+#
+# Docker Compose for MySQL Setup
+services:
+  mysql:
+    image: mysql:lts
+    restart: always
+    container_name: mysql
+    environment:
+      MYSQL_USER: ${DOCKER_DB_USER}
+      MYSQL_DATABASE: admin
+      MYSQL_ROOT_PASSWORD: ${DOCKER_DB_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${DOCKER_DB_PASSWORD}
+    networks:
+      - db_network
+    ports:
+      - 3306:3306
+    volumes:
+      - db_data:/var/lib/mysql/
+
+  phpmyadmin:
+    image: phpmyadmin:5
+    restart: always
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - 8080:80
+    networks:
+      - db_network
+
+volumes:
+  db_data:
+    name: mysql_data
+
+networks:
+  db_network:
+    driver: bridge
+    name: mysql_network
